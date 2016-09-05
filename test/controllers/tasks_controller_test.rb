@@ -15,6 +15,22 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert json.any? { |task| task['title'] == 'Jリーグ観戦' }
   end
 
+  test 'should get index with keyword for title' do
+    get tasks_url(keyword: 'プレミアリーグ観戦')
+    assert_response :success
+
+    json = JSON.parse(@response.body)
+    assert json.all? { |task| task['title'].include?('プレミアリーグ観戦') }
+  end
+
+  test 'should get index with keyword for description' do
+    get tasks_url(keyword: 'TVで観戦する')
+    assert_response :success
+
+    json = JSON.parse(@response.body)
+    assert json.all? { |task| task['description'].include?('TVで観戦する') }
+  end
+
   test 'should create task' do
     assert_difference('Task.count') do
       post tasks_url, params: { task: { description: 'ブンデスリーガをTVで観戦する', title: 'ブンデスリーガ観戦' } }
